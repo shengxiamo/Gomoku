@@ -42,7 +42,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QPushButton" name="pushButton">
+  <widget class="QPushButton" name="restartButton">
    <property name="geometry">
     <rect>
      <x>630</x>
@@ -55,7 +55,7 @@
     <string>重新开始</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton_2">
+  <widget class="QPushButton" name="regrectButton">
    <property name="geometry">
     <rect>
      <x>630</x>
@@ -65,10 +65,10 @@
     </rect>
    </property>
    <property name="text">
-    <string>返回</string>
+    <string>悔棋</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton_3">
+  <widget class="QPushButton" name="returnButton">
    <property name="geometry">
     <rect>
      <x>630</x>
@@ -78,7 +78,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>退出</string>
+    <string>返回</string>
    </property>
   </widget>
   <widget class="QWidget" name="layoutWidget">

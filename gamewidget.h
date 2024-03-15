@@ -43,6 +43,7 @@ private:
     int score_black;
     int score_write;
     int numOfChess;
+    bool is_in_chessboard = false;  // 优化点，增加一个属性，与鼠标事件结合实时检测鼠标是否在棋盘内
 
 protected:
     void paintEvent(QPaintEvent *event) override;

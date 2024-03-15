@@ -40,7 +40,7 @@ void gameWidget::paintEvent(QPaintEvent *event){
     }
 
     // 画鼠标光标
-    if(cursorRow != -1 && cursorCol != -1){ // 鼠标在棋盘范围内
+    if(cursorRow != -1 && cursorCol != -1 && is_in_chessboard){ // 鼠标在棋盘范围内
         // 在角点处绘制边长为8的矩形
         QRect rec(chessboard[cursorCol][cursorRow].x() - 8 / 2,chessboard[cursorCol][cursorRow].y() -8 / 2,8,8);
         painter.drawRect(rec);
@@ -65,7 +65,7 @@ void gameWidget::paintEvent(QPaintEvent *event){
     //             //那么画笔的颜色就会被改成红色，于是接下来每一个给棋子描边的画笔都是红色
     //             //只需要在标记the last one之后把红色改回即可
                 if (i == lastRow && j == lastCol) {
-                    painter.drawEllipse(chessboard[j][i].x() - 20 / 2, chessboard[j][i].y() - 20 / 2, 20, 20);
+                    painter.drawEllipse(chessboard[j][i].x() - 30 / 2, chessboard[j][i].y() - 30 / 2, 30, 30);
                     painter.setPen(QPen(Qt::red, 2, Qt::SolidLine)); // 设置画笔
                     // 最后一颗棋子用红色十字线标记
                     painter.drawLine(chessboard[j][i].x() - 15, chessboard[j][i].y(), chessboard[j][i].x() + 15, chessboard[j][i].y());
@@ -85,36 +85,44 @@ void gameWidget::paintEvent(QPaintEvent *event){
 
 void gameWidget::mouseMoveEvent(QMouseEvent *event){
     //判断鼠标是否在棋盘内
-    if(event->x() >= 0 && event->x() <= 455 && event->y() >= 0 && event->y() <= 600){  // 0 = 20 - 20,455 = 20 + 14 * 40 + 20
-        //如果在棋盘内，则把鼠标设置为空白
+    if(event->x() >= 0 && event->x() <= 600 && event->y() >= 0 && event->y() <= 600){  // 0 = 20 -20 = 600 = 14 * 40 + 20 + 20 确保边界判定范围不变,仍为 40 * 40
+        is_in_chessboard = true;  // 优化1：在确认落子前确定“当前”的鼠标位置仍然在棋盘内，否则不落子
+        // 如果在棋盘内，则把鼠标设置为空白
         setCursor(Qt::BlankCursor);
-        for(int i=0;i<15;++i)
-            for(int j=0;j<15;++j){
-                //鼠标位置
-                float x=event->x(),y=event->y();
-                //判断鼠标落在哪一个点附近(正方形范围)
-                if((x >= (chessboard[i][j].x() - 20)) && (x < (chessboard[i][j].x() + 20)) &&
-                    (y >= (chessboard[i][j].y() - 20))&&(y < (chessboard[i][j].y() + 15))) {
-                    cursorRow = j;
-                    cursorCol = i;
+        // for(int i=0;i<15;++i)
+        //     for(int j=0;j<15;++j){
+        //         //鼠标位置
+        //         float x=event->x(),y=event->y();
+        //         //判断鼠标落在哪一个点附近(正方形范围)
+        //         if((x >= (chessboard[i][j].x() - 20)) && (x < (chessboard[i][j].x() + 20)) &&
+        //             (y >= (chessboard[i][j].y() - 20))&&(y < (chessboard[i][j].y() + 20))) {
+        //             cursorRow = j;
+        //             cursorCol = i;
 
+        // 优化2：直接将鼠标坐标映射为棋盘坐标，虽然都是O（1）时间复杂度，但是不需要重复255次循环，速度提高上百倍，用户体验明显流畅
+        cursorCol = (event->x()) / 40;
+        cursorRow = (event->y()) / 40;
                     //如果该点有子，则显示红圈
                     if(ai.chesses[cursorRow][cursorCol] != C_NONE)
                         setCursor(Qt::ForbiddenCursor);
 
                     //展示图标坐标
                     QString str = "坐标:";
-                    str += QString::number(j);
+                    str += QString::number(cursorCol);
                     str += ",";
-                    str += QString::number(i);
-                    if(turn == T_BLACK) ui->lb_white_position->setText(str);
+                    str += QString::number(cursorRow);
+                    if(turn == T_BLACK) ui->lb_black_position->setText(str);
                     else ui->lb_white_position->setText(str);
-                    break;
-                }
-            }
+                    // break;
+                //}
+            //}
     }
     //如果在棋盘外，显示鼠标
-    else setCursor(Qt::ArrowCursor);
+    else {
+        setCursor(Qt::ArrowCursor);
+        is_in_chessboard = false;
+    }
+    qDebug() << is_in_chessboard;
     update();
 }
 
@@ -163,14 +171,14 @@ bool gameWidget::chessOneByPlayer(){
 }
 
 void gameWidget::mouseReleaseEvent(QMouseEvent *event){ // 玩家点击鼠标左键确认落子
-    if(mode==PLAYER){
+    if(is_in_chessboard && mode==PLAYER ){
         if(chessOneByPlayer()){
     //         if(status==FINISH){
     //             bool newgame=deadWindow(&msg);
     //             if(newgame) initializeGame();
     //         }
     //     }
-    // }else{
+    // }else if(is_in_chessboard){
     //     if(chessOneByPlayer()){
     //         if(status==UNDERWAY){
     //             chessOneByAi();
