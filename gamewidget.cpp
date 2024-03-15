@@ -134,7 +134,6 @@ void gameWidget::oneChessMove(int row, int col){
     for(int i=0;i<15;i++){
         for(int j=0;j<15;j++){
             ai.myChesses[i][j]=usedChesses[i][j];
-
         }
     }
     qDebug()<<row<<","<<col;
@@ -196,3 +195,34 @@ void gameWidget::mouseReleaseEvent(QMouseEvent *event){ // 玩家点击鼠标左
         }
      }
 }
+
+void gameWidget::initializeGame(){
+
+    int static count=0;
+    qDebug()<<"游戏第"<<count<<"次初始化";
+    if(mode==PLAYER)qDebug()<<"上一次游玩的是玩家模式";
+    else if(mode==AI) qDebug()<<"上一次游玩的是人机模式";
+    else if(mode==NONE) qDebug()<<"无模式";
+    //ai.zobb.initRandomTable();
+    for(int i=0;i<15;++i){
+        for(int j=0;j<15;++j){
+            ai.chesses[i][j]=C_NONE;
+            usedChesses[i][j]=0;
+        }
+    }
+
+    status=UNDERWAY;
+    turn=T_BLACK;
+    cursorRow=-1;
+    cursorCol=-1;
+    count++;
+    numOfChess=0;
+}
+
+void gameWidget::on_restartButton_clicked()
+{
+    this->hide();
+    initializeGame();
+    this->show(); //关闭并重新渲染一遍
+}
+

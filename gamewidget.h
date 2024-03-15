@@ -21,6 +21,7 @@ public:
     ~gameWidget();
     void oneChessMove(int row,int col);// 根据落子坐标更新棋局状态
     bool chessOneByPlayer();
+    void initializeGame(); // 重新开始
 private:
     Ui::gameWidget *ui;
     QPoint chessboard[15][15];// 记录棋盘角点坐标，方便绘制棋盘,第一个下标是列，第二个是行
@@ -49,6 +50,8 @@ protected:
     void paintEvent(QPaintEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;//实际落子
+private slots:
+    void on_restartButton_clicked();
 };
 
 
