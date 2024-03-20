@@ -66,6 +66,14 @@ public:
     chessAI();
     int chesses[15][15];// 存储整个棋局,0为无子,1为黑子,3为白子
     int myChesses[15][15];// 存储AI对应位置棋子是第几步落下的
+
+public: //博弈树搜索部分
+    void init_tuple6type();//对棋型判断数组赋初值
+    EVALUATION evaluate(int board[15][15], bool needPrint = false);//对棋局board的黑子的局势估值函数,还可以判断输赢
+private:
+    int tuple6type[4][4][4][4][4][4];//棋型辨识数组,0无子,1黑子,2白子,3边界
+    POINTS points;//最佳落子位置
+
 };
 
 #endif // CHESSAI_H

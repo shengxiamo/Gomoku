@@ -22,6 +22,8 @@ public:
 private slots:
     void on_playersButton_clicked();
 
+    void on_AIButton_clicked();
+
 private:
     Ui::Widget *ui;
     gameWidget *game;

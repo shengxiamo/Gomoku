@@ -10,6 +10,7 @@ gameWidget::gameWidget(QWidget *parent)
         for(int j = 0;j < 15;++j){
             chessboard[i][j].setX(20 + 40 * i);
             chessboard[i][j].setY(20 + 40 * j);
+            ai.chesses[i][j] = 0;
         }
     }
 
@@ -122,7 +123,6 @@ void gameWidget::mouseMoveEvent(QMouseEvent *event){
         setCursor(Qt::ArrowCursor);
         is_in_chessboard = false;
     }
-    qDebug() << is_in_chessboard;
     update();
 }
 
@@ -147,9 +147,8 @@ void gameWidget::oneChessMove(int row, int col){
         ai.chesses[row][col]=C_WHITE;
     }
     //如果这步棋下完之后游戏结束，则更改游戏状态
-    //gameResult result=ai.evaluate(ai.chesses).result;
-    //if(result!=R_DRAW||isDeadGame()) status=FINISH;
-
+     gameResult result=ai.evaluate(ai.chesses).result;
+    if(result!=R_DRAW ||isDeadGame()) status=FINISH;
 
     update();
 }
@@ -170,16 +169,17 @@ bool gameWidget::chessOneByPlayer(){
 }
 
 void gameWidget::mouseReleaseEvent(QMouseEvent *event){ // 玩家点击鼠标左键确认落子
-    if(is_in_chessboard && mode==PLAYER ){
+    if((is_in_chessboard || status == FINISH) && mode==PLAYER){
         if(chessOneByPlayer()){
-    //         if(status==FINISH){
-    //             bool newgame=deadWindow(&msg);
-    //             if(newgame) initializeGame();
-    //         }
-    //     }
-    // }else if(is_in_chessboard){
-    //     if(chessOneByPlayer()){
-    //         if(status==UNDERWAY){
+            if(status==FINISH){
+                bool newgame=deadWindow(&msg);
+                if(newgame) initializeGame();
+            }
+        }
+    }
+    else {
+        if(chessOneByPlayer()){
+            if(status==UNDERWAY){
     //             chessOneByAi();
     //             if(status==FINISH){
     //                 bool newgame=deadWindow(&msg);
@@ -191,9 +191,9 @@ void gameWidget::mouseReleaseEvent(QMouseEvent *event){ // 玩家点击鼠标左
     //             bool newgame=deadWindow(&msg);
     //             if(newgame)
     //                 initializeGame();
-    //         }
+            }
         }
-     }
+    }
 }
 
 void gameWidget::initializeGame(){
@@ -224,5 +224,57 @@ void gameWidget::on_restartButton_clicked()
     this->hide();
     initializeGame();
     this->show(); //关闭并重新渲染一遍
+}
+
+bool gameWidget::isDeadGame(){
+    int chessNum=0;
+    for(int i=0;i<15;++i)
+        for(int j=0;j<15;++j)
+            if(ai.chesses[i][j]!=C_NONE)chessNum++;
+    if(chessNum==15*15)return true;
+    else return false;
+}
+
+//游戏结束窗口
+bool gameWidget::deadWindow(QMessageBox *msg){
+    int static myCount=0;
+    msg->setIcon(QMessageBox::Critical);
+    if(myCount==0){
+        msg->addButton(QMessageBox::Yes);
+        msg->addButton(QMessageBox::No);
+    }
+
+    gameResult result=ai.evaluate(ai.chesses).result;
+    if(result!=R_DRAW) status=FINISH;
+    if(result==R_BLACK){
+        qDebug()<<"黑棋赢";
+        msg->setText("黑棋赢\n想开始下一局吗？");
+        score_black++;
+    }
+    else if(result==R_WHITE){
+        qDebug()<<"白棋赢";
+        msg->setText("白棋赢\n想开始下一局吗？");
+        score_white++;
+    }
+    else{
+        qDebug()<<"平局";
+        msg->setText("平局\n想开始下一局吗？");
+    }
+    ui->lcd_black->display(score_black);
+    ui->lcd_white->display(score_white);
+    int cliResult = msg->exec();
+    myCount++;
+    if (cliResult == QMessageBox::Yes) {
+        // 用户点击了Yes按钮
+        // 在这里执行相关操作
+        //initializeGame();
+        return true;
+    } else {
+        // 用户点击了No按钮
+        // 在这里执行相关操作
+        //此处的操作应该是让棋盘删除黑棋和白棋的最后一颗棋子
+        return false;
+    }
+
 }
 
