@@ -21,7 +21,6 @@ void Widget::on_playersButton_clicked()
     game->setGameMode(PLAYER);
 }
 
-
 void Widget::on_AIButton_clicked()
 {
     this->hide();

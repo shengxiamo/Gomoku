@@ -55,7 +55,7 @@
     <string>重新开始</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="regrectButton">
+  <widget class="QPushButton" name="regretButton">
    <property name="geometry">
     <rect>
      <x>630</x>

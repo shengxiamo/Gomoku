@@ -15,6 +15,8 @@ gameWidget::gameWidget(QWidget *parent)
     }
 
     setMouseTracking(true);// 不用点击鼠标也一直追踪
+
+    connect(this->ui->regretButton,SIGNAL(clicked(bool)),this,SLOT(regret()));
 }
 
 gameWidget::~gameWidget()
@@ -283,7 +285,9 @@ bool gameWidget::deadWindow(QMessageBox *msg){
 
 void gameWidget::on_returnButton_clicked()
 {
-    ;
+    qDebug()<<"return";
+    this->hide();
+    initializeGame();
 }
 
 void gameWidget::chessOneByAi(){
@@ -313,26 +317,23 @@ void gameWidget::chessOneByAi(){
     int zeroChess;
     if(reIsLegalMove(p.x(),p.y())){
         oneChessMove(p.x(),p.y());
-        //记录0，0位置棋子的颜色
+        // 记录0，0位置棋子的颜色
         if(p.x()==0&&p.y()==0){
             zeroChess=ai.chesses[p.x()][p.y()];
         }
-        //记录最新一步的落子位置
+        // 记录最新一步的落子位置
         lastCol=p.y();
         lastRow=p.x();
     }
     else {
-        qDebug()<<"ai下标不合法！";
-        //出Bug就摆烂随便下
-        //摆烂都摆不明白
-
+        // 出Bug就摆烂随便下
         turn=T_WHITE;
         int roll=0;
         for(int row=0;row<15;row++){
             for(int col=0;col<15;col++){
                 if(usedChesses[row][col]==0){
                     oneChessMove(row,col);
-                    //记录最新一步的落子位置
+                    // 记录最新一步的落子位置
                     lastCol=col;
                     lastRow=row;
                     roll=1;
@@ -360,3 +361,77 @@ void gameWidget::chessOneByAi(){
     this->ui->lb_eval->setText(text);
 }
 
+void gameWidget::regret(){
+    qDebug()<<"regret";
+    if(numOfChess<=0){
+        initializeGame1();
+        return;
+    }
+    this->hide();
+    exRegret();
+    update();
+    this->show();
+    update();
+}
+//悔棋实现函数
+void gameWidget::exRegret(){
+    int col1,col2,row1,row2;
+    if(mode==AI){
+        //遍历棋谱，找到最后两个下的子，仍是玩家走棋
+        for(int row=0;row<15;row++){
+            for(int col=0;col<15;col++){
+                if(usedChesses[row][col]==numOfChess){
+                    row1=row;
+                    col1=col;
+                    //务必在删除棋子后清空棋谱，不然会导致漏删棋子
+                    usedChesses[row][col]=0;
+                }
+                if(usedChesses[row][col]==numOfChess-1){
+                    row2=row;
+                    col2=col;
+                    usedChesses[row][col]=0;
+                }
+                if(usedChesses[row][col]==numOfChess-2){
+                    lastRow=row;
+                    lastCol=col;
+                }
+            }
+        }
+        ai.chesses[row1][col1]=C_NONE;
+        ai.chesses[row2][col2]=C_NONE;
+        numOfChess-=2;
+        if(numOfChess<=0){
+            initializeGame1();
+        }
+    }
+    //玩家模式只需要一步悔棋
+    else if(mode==PLAYER){
+        for(int row=0;row<15;row++){
+            for(int col=0;col<15;col++){
+                if(usedChesses[row][col]==numOfChess){
+                    row1=row;
+                    col1=col;
+                    usedChesses[row][col]=0;
+                }
+                if(usedChesses[row][col]==numOfChess-1){
+                    lastRow=row;
+                    lastCol=col;
+                }
+            }
+        }
+        //删除最后一颗子
+        ai.chesses[row1][col1]=C_NONE;
+        if(turn==T_WHITE) turn=T_BLACK;
+        else turn=T_WHITE;
+        numOfChess--;
+    }
+    status=UNDERWAY;
+}
+
+void gameWidget::initializeGame1(){ // 重新开始
+
+    qDebug()<<"start";
+    this->hide();
+    initializeGame();
+    this->show();
+}
