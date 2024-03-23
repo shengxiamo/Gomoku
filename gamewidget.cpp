@@ -127,34 +127,34 @@ void gameWidget::oneChessMove(int row, int col){
     //将棋谱传递给算法文件
     for(int i=0;i<15;i++){
         for(int j=0;j<15;j++){
-            ai.myChesses[i][j]=usedChesses[i][j];
+            ai.myChesses[i][j] = usedChesses[i][j];
         }
     }
     qDebug()<<row<<","<<col;
     // 如果上一步是黑棋下的，记录位置，把下一步棋交给白棋，反之亦然
-    if(turn==T_BLACK){
-        turn=T_WHITE;
-        ai.chesses[row][col]=C_BLACK;
+    if(turn == T_BLACK){
+        turn = T_WHITE;
+        ai.chesses[row][col] = C_BLACK;
     }
     else{
-        turn=T_BLACK;
-        ai.chesses[row][col]=C_WHITE;
+        turn = T_BLACK;
+        ai.chesses[row][col] = C_WHITE;
     }
     //如果这步棋下完之后游戏结束，则更改游戏状态
-     gameResult result=ai.evaluate(ai.chesses).result;
-    if(result!=R_DRAW ||isDeadGame()) status=FINISH;
+     gameResult result = ai.evaluate(ai.chesses).result;
+    if(result!=R_DRAW ||isDeadGame()) status = FINISH;
 
     update();
 }
 
 // 玩家下棋
 bool gameWidget::chessOneByPlayer(){
-    if(ai.chesses[cursorRow][cursorCol]==C_NONE){
+    if(ai.chesses[cursorRow][cursorCol] == C_NONE){
         qDebug()<<"player chess";
         oneChessMove(cursorRow,cursorCol);
         //记录最新一步的落子位置
-        lastCol=cursorCol;
-        lastRow=cursorRow;
+        lastCol = cursorCol;
+        lastRow = cursorRow;
         // qDebug()<<"局势得分:"<<ai.evaluate(ai.chesses).score;
 
         return true;
@@ -163,26 +163,28 @@ bool gameWidget::chessOneByPlayer(){
 }
 
 void gameWidget::mouseReleaseEvent(QMouseEvent *event){ // 玩家点击鼠标左键确认落子
-    if((is_in_chessboard || status == FINISH) && mode==PLAYER){
+    if(is_in_chessboard && status != FINISH && mode == PLAYER){
         if(chessOneByPlayer()){
-            if(status==FINISH){
+            if(status == FINISH){
                 bool newgame=deadWindow(&msg);
                 if(newgame) initializeGame();
             }
         }
     }
-    else {
+    else if (is_in_chessboard && status != FINISH && mode == AI) {
         if(chessOneByPlayer()){
-            if(status==UNDERWAY){
+            if(status == UNDERWAY){
+                update();
+                QCoreApplication::processEvents(); // 强制处理未处理的事件，确保界面更新
                 chessOneByAi();
-                if(status==FINISH){
-                    bool newgame=deadWindow(&msg);
+                if(status == FINISH){
+                    bool newgame = deadWindow(&msg);
                     if(newgame)
                         initializeGame();
                 }
             }
-            else if(status==FINISH){
-                bool newgame=deadWindow(&msg);
+            else if(status == FINISH){
+                bool newgame = deadWindow(&msg);
                 if(newgame)
                     initializeGame();
             }
