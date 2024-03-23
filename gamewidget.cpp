@@ -46,7 +46,6 @@ void gameWidget::paintEvent(QPaintEvent *event){
         QRect rec(chessboard[cursorCol][cursorRow].x() - 8 / 2,chessboard[cursorCol][cursorRow].y() -8 / 2,8,8);
         painter.drawRect(rec);
     }
-    // //qDebug()<<"你亲爹的状态（画棋子之前）"<<ai.chesses[0][0];
 
     // 绘制棋子
     for(int i = 0;i < 15;++i){
@@ -60,19 +59,13 @@ void gameWidget::paintEvent(QPaintEvent *event){
                     ai.chesses[i][j] = C_WHITE;
                 }
 
-    //             // 判断是否为最后一颗棋子
-    //             //产生了一个bug，所有在最后一颗子下方的棋子会被红圈包围
-    //             //原因是棋子会按顺序遍历，从0，0到14，14.如果在前面的棋子是last one
-    //             //那么画笔的颜色就会被改成红色，于是接下来每一个给棋子描边的画笔都是红色
-    //             //只需要在标记the last one之后把红色改回即可
+                // 判断是否为最后一颗棋子
                 if (i == lastRow && j == lastCol) {
                     painter.drawEllipse(chessboard[j][i].x() - 30 / 2, chessboard[j][i].y() - 30 / 2, 30, 30);
                     painter.setPen(QPen(Qt::red, 2, Qt::SolidLine)); // 设置画笔
                     // 最后一颗棋子用红色十字线标记
                     painter.drawLine(chessboard[j][i].x() - 15, chessboard[j][i].y(), chessboard[j][i].x() + 15, chessboard[j][i].y());
                     painter.drawLine(chessboard[j][i].x(), chessboard[j][i].y() - 15, chessboard[j][i].x(), chessboard[j][i].y() + 15);
-    //                 //试图纠正红圈Bug
-    //                 //把画笔调回默认情况下的黑色就可以解决
                     painter.setPen(QPen(Qt::black));
                 }
                 else {
@@ -81,7 +74,6 @@ void gameWidget::paintEvent(QPaintEvent *event){
             }
         }
     }
-    // //qDebug()<<"你亲爹的状态（画棋子之后）"<<ai.chesses[0][0];
 }
 
 void gameWidget::mouseMoveEvent(QMouseEvent *event){
@@ -180,17 +172,17 @@ void gameWidget::mouseReleaseEvent(QMouseEvent *event){ // 玩家点击鼠标左
     else {
         if(chessOneByPlayer()){
             if(status==UNDERWAY){
-    //             chessOneByAi();
-    //             if(status==FINISH){
-    //                 bool newgame=deadWindow(&msg);
-    //                 if(newgame)
-    //                     initializeGame();
-    //             }
-    //         }
-    //         else if(status==FINISH){
-    //             bool newgame=deadWindow(&msg);
-    //             if(newgame)
-    //                 initializeGame();
+                chessOneByAi();
+                if(status==FINISH){
+                    bool newgame=deadWindow(&msg);
+                    if(newgame)
+                        initializeGame();
+                }
+            }
+            else if(status==FINISH){
+                bool newgame=deadWindow(&msg);
+                if(newgame)
+                    initializeGame();
             }
         }
     }
@@ -235,7 +227,17 @@ bool gameWidget::isDeadGame(){
     else return false;
 }
 
-//游戏结束窗口
+// 检验落子的有效性
+bool gameWidget::isLegalMove(int row, int col){
+    if(ai.chesses[row][col]==C_NONE)return true;
+    else return false;
+}
+bool gameWidget::reIsLegalMove(int row, int col){
+    if(usedChesses[row][col]==0)return true;
+    else return false;
+}
+
+// 游戏结束窗口
 bool gameWidget::deadWindow(QMessageBox *msg){
     int static myCount=0;
     msg->setIcon(QMessageBox::Critical);
@@ -276,5 +278,85 @@ bool gameWidget::deadWindow(QMessageBox *msg){
         return false;
     }
 
+}
+
+
+void gameWidget::on_returnButton_clicked()
+{
+    ;
+}
+
+void gameWidget::chessOneByAi(){
+    qDebug()<<"ai chess";
+
+    //QPoint p=ai.findBestMove(T_BLACK);
+
+    struct timeval tpstart,tpend;
+    float timeuse;//ai计算耗时
+    gettimeofday(&tpstart,NULL);
+
+    //QPoint p=ai.findBestMoveGreedy(C_BLACK);
+    ai.nodeNum=0;
+
+    if(!ai.analyse_kill(ai.chesses,16)){
+        qDebug()<<"没找到杀棋";
+        //如果没有杀棋就用六层的博弈树
+        ai.analyse(ai.chesses,6,-INT_MAX,INT_MAX);
+
+    }else{
+        qDebug()<<"找到了杀棋";
+    }
+
+    QPoint p=ai.decision.pos;
+
+    qDebug()<<"ai落子:"<<p.x()<<","<<p.y();
+    int zeroChess;
+    if(reIsLegalMove(p.x(),p.y())){
+        oneChessMove(p.x(),p.y());
+        //记录0，0位置棋子的颜色
+        if(p.x()==0&&p.y()==0){
+            zeroChess=ai.chesses[p.x()][p.y()];
+        }
+        //记录最新一步的落子位置
+        lastCol=p.y();
+        lastRow=p.x();
+    }
+    else {
+        qDebug()<<"ai下标不合法！";
+        //出Bug就摆烂随便下
+        //摆烂都摆不明白
+
+        turn=T_WHITE;
+        int roll=0;
+        for(int row=0;row<15;row++){
+            for(int col=0;col<15;col++){
+                if(usedChesses[row][col]==0){
+                    oneChessMove(row,col);
+                    //记录最新一步的落子位置
+                    lastCol=col;
+                    lastRow=row;
+                    roll=1;
+                    break;
+                }
+            }
+            if(roll) break;
+        }
+
+    }
+
+    qDebug()<<"ai所求局势得分:"<<ai.evaluate(ai.chesses).score;
+
+    gettimeofday(&tpend,NULL);
+    timeuse=(1000000*(tpend.tv_sec-tpstart.tv_sec) + tpend.tv_usec-tpstart.tv_usec)/1000000.0;
+    qDebug()<<timeuse<<"s";
+
+    QString text="ai计算耗时:"+QString::number(timeuse)+"s";
+    this->ui->lb_timeuse->setText(text);
+
+    text="ai叶结点数:"+QString::number(ai.nodeNum);
+    this->ui->lb_nodeNum->setText(text);
+
+    text="ai局面估分:"+QString::number(ai.evaluate(ai.chesses).score);
+    this->ui->lb_eval->setText(text);
 }
 

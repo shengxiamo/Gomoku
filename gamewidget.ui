@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>801</width>
-    <height>592</height>
+    <height>620</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>630</x>
@@ -109,6 +109,45 @@
      </widget>
     </item>
    </layout>
+  </widget>
+  <widget class="QLabel" name="lb_timeuse">
+   <property name="geometry">
+    <rect>
+     <x>260</x>
+     <y>570</y>
+     <width>221</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>ai计算耗时:</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="lb_nodeNum">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>570</y>
+     <width>171</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>ai叶结点数:</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="lb_eval">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>570</y>
+     <width>171</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>ai局面估分:</string>
+   </property>
   </widget>
  </widget>
  <resources/>

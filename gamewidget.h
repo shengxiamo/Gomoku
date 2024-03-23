@@ -1,13 +1,20 @@
 #ifndef GAMEWIDGET_H
 #define GAMEWIDGET_H
 
-#include "chessai.h"
-#include "chessai.h"
-
 #include <QWidget>
 #include <QPainter>
 #include <QMouseEvent>
 #include <QMessageBox>
+#include <QMap>
+//#include <QRandomGenerator>
+#include <QTimer>
+#include <QTime>
+#include <sys/time.h>
+#include <QDebug>
+#include <iostream>
+#include "chessAI.h"
+#include "zobrist.h"
+using namespace std;
 
 namespace Ui {
 class gameWidget;
@@ -27,6 +34,10 @@ public:
     bool deadWindow(QMessageBox *msg);
     QMessageBox msg;
     void setGameMode(gameMode m){mode=m;}
+    bool isLegalMove(int row,int col);//判断下子位置是否合法
+    void exRegret();
+    bool reIsLegalMove(int row,int col);
+
 private:
     Ui::gameWidget *ui;
     QPoint chessboard[15][15];// 记录棋盘角点坐标，方便绘制棋盘,第一个下标是列，第二个是行
@@ -55,9 +66,14 @@ protected:
     void paintEvent(QPaintEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;//实际落子
+
 private slots:
     void on_restartButton_clicked();
+    void on_returnButton_clicked();
+
+public slots:
+    void chessOneByAi();
 };
 
-
 #endif // GAMEWIDGET_H
+
