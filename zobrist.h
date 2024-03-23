@@ -1,15 +1,14 @@
 #ifndef ZOBRIST_H
 #define ZOBRIST_H
-#include "stdint.h"
-#include "vector"
+
+#include <stdint.h>
+#include <vector>
 #include <iostream>
 #include <random>
-//#include <cstdlib>
-//#include <ctime>
 #include <qdebug.h>
 #include <QPoint>
 
-#define C_NONE 0//棋子：黑子,白子,无子
+#define C_NONE 0// 棋子：黑子,白子,无子
 #define C_BLACK 1
 #define C_WHITE 2
 

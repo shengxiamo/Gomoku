@@ -7,6 +7,7 @@ Widget::Widget(QWidget *parent)
 {
     ui->setupUi(this);
     game = new gameWidget;
+    connect(game,&gameWidget::returnSignal,this,&Widget::show);
 }
 
 Widget::~Widget()

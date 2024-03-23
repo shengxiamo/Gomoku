@@ -17,6 +17,7 @@ gameWidget::gameWidget(QWidget *parent)
     setMouseTracking(true);// 不用点击鼠标也一直追踪
 
     connect(this->ui->regretButton,SIGNAL(clicked(bool)),this,SLOT(regret()));
+    connect(this->ui->returnButton,SIGNAL(clicked(bool)),this,SLOT(returnPush()));
 }
 
 gameWidget::~gameWidget()
@@ -173,9 +174,8 @@ void gameWidget::mouseReleaseEvent(QMouseEvent *event){ // 玩家点击鼠标左
     }
     else if (is_in_chessboard && status != FINISH && mode == AI) {
         if(chessOneByPlayer()){
+            QCoreApplication::processEvents();
             if(status == UNDERWAY){
-                update();
-                QCoreApplication::processEvents(); // 强制处理未处理的事件，确保界面更新
                 chessOneByAi();
                 if(status == FINISH){
                     bool newgame = deadWindow(&msg);
@@ -436,4 +436,8 @@ void gameWidget::initializeGame1(){ // 重新开始
     this->hide();
     initializeGame();
     this->show();
+}
+
+void gameWidget::returnPush() {
+    emit returnSignal();
 }

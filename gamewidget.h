@@ -72,11 +72,16 @@ private slots:
     void on_returnButton_clicked();
 
 public slots:
+    // 返回
+    void returnPush();
     void chessOneByAi();
     // 重新开始
     void initializeGame1();
     // 悔棋
     void regret();
+
+signals:
+    void returnSignal();
 };
 
 #endif // GAMEWIDGET_H
