@@ -164,7 +164,7 @@ bool gameWidget::chessOneByPlayer(){
 }
 
 void gameWidget::mouseReleaseEvent(QMouseEvent *event){ // 玩家点击鼠标左键确认落子
-    if(is_in_chessboard && status != FINISH && mode == PLAYER){
+    if(is_in_chessboard && mode == PLAYER && status != FINISH){
         if(chessOneByPlayer()){
             if(status == FINISH){
                 bool newgame=deadWindow(&msg);
@@ -172,7 +172,7 @@ void gameWidget::mouseReleaseEvent(QMouseEvent *event){ // 玩家点击鼠标左
             }
         }
     }
-    else if (is_in_chessboard && status != FINISH && mode == AI) {
+    else if (is_in_chessboard && mode == AI && status != FINISH) {
         if(chessOneByPlayer()){
             QCoreApplication::processEvents();
             if(status == UNDERWAY){
