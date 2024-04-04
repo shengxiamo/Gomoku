@@ -19,6 +19,9 @@ public:
     Widget(QWidget *parent = nullptr);
     ~Widget();
 
+protected:
+    void paintEvent(QPaintEvent *event) override; // 重写paintEvent函数
+
 private slots:
     void on_playersButton_clicked();
 
@@ -27,6 +30,6 @@ private slots:
 private:
     Ui::Widget *ui;
     gameWidget *game;
-
+    QPixmap background; // 声明一个QPixmap对象用于存储背景图片
 };
 #endif // WIDGET_H

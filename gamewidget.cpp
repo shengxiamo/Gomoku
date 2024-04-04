@@ -6,6 +6,7 @@ gameWidget::gameWidget(QWidget *parent)
     , ui(new Ui::gameWidget)
 {
     ui->setupUi(this);
+    this->setWindowTitle("西大五子棋");
     for(int i = 0;i < 15;++i){// 棋盘左上角点为(20,20),每格间距为40
         for(int j = 0;j < 15;++j){
             chessboard[i][j].setX(20 + 40 * i);
@@ -18,6 +19,8 @@ gameWidget::gameWidget(QWidget *parent)
 
     connect(this->ui->regretButton,SIGNAL(clicked(bool)),this,SLOT(regret()));
     connect(this->ui->returnButton,SIGNAL(clicked(bool)),this,SLOT(returnPush()));
+
+    background = QPixmap(":/images/board.jpg");
 }
 
 gameWidget::~gameWidget()
@@ -28,6 +31,7 @@ gameWidget::~gameWidget()
 void gameWidget::paintEvent(QPaintEvent *event){
 
     QPainter painter(this);
+    painter.drawPixmap(0, 0, width(), height(), background);
     painter.setRenderHint(QPainter::Antialiasing);
     //绘制棋盘
     painter.setPen(Qt::black);
@@ -64,6 +68,9 @@ void gameWidget::paintEvent(QPaintEvent *event){
 
                 // 判断是否为最后一颗棋子
                 if (i == lastRow && j == lastCol) {
+                    if (ai.chesses[i][j] == C_WHITE) {
+                        painter.setPen(Qt::white);
+                    }
                     painter.drawEllipse(chessboard[j][i].x() - 30 / 2, chessboard[j][i].y() - 30 / 2, 30, 30);
                     painter.setPen(QPen(Qt::red, 2, Qt::SolidLine)); // 设置画笔
                     // 最后一颗棋子用红色十字线标记
@@ -72,7 +79,11 @@ void gameWidget::paintEvent(QPaintEvent *event){
                     painter.setPen(QPen(Qt::black));
                 }
                 else {
+                    if (ai.chesses[i][j] == C_WHITE) {
+                        painter.setPen(Qt::white);
+                    }
                     painter.drawEllipse(chessboard[j][i].x() - 30 / 2, chessboard[j][i].y() - 30 / 2, 30, 30);// 画一个半径为30的圆表示棋子
+                    painter.setPen(Qt::black);
                 }
             }
         }
@@ -273,7 +284,7 @@ bool gameWidget::deadWindow(QMessageBox *msg){
     if (cliResult == QMessageBox::Yes) {
         // 用户点击了Yes按钮
         // 在这里执行相关操作
-        //initializeGame();
+        initializeGame();
         return true;
     } else {
         // 用户点击了No按钮

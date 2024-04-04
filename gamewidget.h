@@ -62,6 +62,8 @@ private:
     int score_white;
     int numOfChess;
 
+    QPixmap background;
+
 protected:
     void paintEvent(QPaintEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
