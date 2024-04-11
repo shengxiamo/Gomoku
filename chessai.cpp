@@ -7,12 +7,14 @@ chessAI::chessAI()
     qDebug()<<"初始化ai";
 }
 // 检查是否在棋盘内
-bool chessAI::checkBound(int x,int y){
+bool chessAI::checkBound(int x,int y)
+{
     if(x >=0 && x <15 && y >= 0 && y < 15)return true;
     else return false;
 }
 // 对四个方向xy坐标的设置
-QPoint chessAI::getXY(int row, int col, int dir, int rel){
+QPoint chessAI::getXY(int row, int col, int dir, int rel)
+{
     QPoint p;
     if(dir == RIGHT){
         p.setX(row);
@@ -30,7 +32,8 @@ QPoint chessAI::getXY(int row, int col, int dir, int rel){
     return p;
 }
 // 对一个位置的贪心算法
-int chessAI::calcOnePosGreedy(int board[15][15],int row, int col, int C_ME){
+int chessAI::calcOnePosGreedy(int board[15][15],int row, int col, int C_ME)
+{
     int sum = 0;
     for(int i = 0;i < 4;++i){// 四个方向
         for(int j = 0;j < 5;++j){// 每个方向上最多5个五元组
@@ -54,7 +57,8 @@ int chessAI::calcOnePosGreedy(int board[15][15],int row, int col, int C_ME){
     return sum;
 }
 // 对五元组的棋形打分
-int chessAI::tupleScoreGreedy(int black, int white, int C_ME){
+int chessAI::tupleScoreGreedy(int black, int white, int C_ME)
+{
     // 连5
     if(C_ME == C_BLACK && black == 5)return 9999999;
     if(C_ME == C_WHITE && white == 5)return 9999999;
@@ -86,7 +90,8 @@ int chessAI::tupleScoreGreedy(int black, int white, int C_ME){
 
 }
 // 给棋盘上每个空的位置打分
-QPoint chessAI::findBestMoveGreedy(int C_ME){
+QPoint chessAI::findBestMoveGreedy(int C_ME)
+{
     int bestScore = -1000;
     // 这个地方不应该设置最佳点位的默认值为0，当找不到最佳位置的时候，ai会选择下在0,0上，如果多次找不到最佳点位，就会多次下在0，0上
     int bestRow = -1,bestCol = -1;
@@ -118,7 +123,8 @@ QPoint chessAI::findBestMoveGreedy(int C_ME){
     return p;
 }
 
-void chessAI::init_tuple6type(){
+void chessAI::init_tuple6type()
+{
     // 把六元组的默认值设为0
     memset(tuple6type,0,sizeof (tuple6type));
     // 白连5,ai赢
@@ -177,7 +183,8 @@ void chessAI::init_tuple6type(){
     tuple6type[0][0][0][0][1][0] = flex1;
 
     int p1,p2,p3,p4,p5,p6,x,y,ix,iy;// x:左5中黑个数,y:左5中白个数,ix:右5中黑个数,iy:右5中白个数
-    for(p1 = 0;p1<4;++p1){
+    for(p1 = 0;p1<4;++p1)
+    {
         for(p2 = 0;p2<3;++p2){
             for(p3 = 0;p3<3;++p3){
                 for(p4 = 0;p4<3;++p4){
@@ -310,7 +317,8 @@ void chessAI::init_tuple6type(){
 
 
 //统计此时局面分数
-EVALUATION chessAI::evaluate(int board[15][15],bool needPrint) {
+EVALUATION chessAI::evaluate(int board[15][15],bool needPrint)
+{
     //各棋型权重
     int weight[17]={0,1000000,-10000000,50000,-100000,400,-100000,400,-8000,20,-50,20,-50,1,-3,1,-3};
 
@@ -390,7 +398,8 @@ EVALUATION chessAI::evaluate(int board[15][15],bool needPrint) {
 
 
 //从空位中选出20个单独位置评分最高的并进行评估
-POINTS chessAI::seekPoints(int board[15][15],int flag,int depth){
+POINTS chessAI::seekPoints(int board[15][15],int flag,int depth)
+{
     bool B[15][15];//标记数组
     int worth[15][15];
     POINTS best_points;
@@ -470,7 +479,8 @@ POINTS chessAI::seekPoints(int board[15][15],int flag,int depth){
     return best_points;
 }
 //复制棋盘
-void chessAI::copyBoard(int (*A)[15], int (*B)[15]){
+void chessAI::copyBoard(int (*A)[15], int (*B)[15])
+{
     for(int i=0;i<15;++i){
         for(int j=0;j<15;++j){
             if(A[i][j]==C_NONE)B[i][j]=C_NONE;
@@ -480,7 +490,8 @@ void chessAI::copyBoard(int (*A)[15], int (*B)[15]){
     }
 }
 //黑白颠倒
-void chessAI::reverseBoard(int (*A)[15], int (*B)[15]){
+void chessAI::reverseBoard(int (*A)[15], int (*B)[15])
+{
     for(int i=0;i<15;++i){
         for(int j=0;j<15;++j){
             if(A[i][j]==C_NONE)B[i][j]=C_NONE;
@@ -491,7 +502,8 @@ void chessAI::reverseBoard(int (*A)[15], int (*B)[15]){
 }
 
 //分析函数，其变量分别为：棋盘、深度、max的最小值、min的最大值，当max的最小值大于min的最大值，可以剪除该分支
-int chessAI::analyse(int (*board)[15], int depth,int alpha, int beta){
+int chessAI::analyse(int (*board)[15], int depth,int alpha, int beta)
+{
     //用来区分算杀，精确值节点和a,b结点
     unsigned long long hashkey;
     int flag,reflag,rescore;
@@ -504,8 +516,9 @@ int chessAI::analyse(int (*board)[15], int depth,int alpha, int beta){
         if(reflag==EXACT)
             return rescore;
     }*/
-    if(depth==0||EVAL.result!=R_DRAW){//抵达最深层/如果模拟落子可以分出输赢，那么直接返回结果，不需要再搜索
-        nodeNum+=1;
+    if(depth==0||EVAL.result!=R_DRAW) // 抵达最深层或模拟落子可以分出输赢，那么直接返回结果，不需要再搜索
+    {
+        nodeNum+=1;  // 叶子节点数+1
         if(depth==0){
             POINTS P;
             //如果有精确结果就返回精确结果
@@ -521,7 +534,8 @@ int chessAI::analyse(int (*board)[15], int depth,int alpha, int beta){
 
             return P.score[0];//返回最佳位置对应的最高分
         }else return EVAL.score;
-    }else if(depth%2==0){//max层,我方(白)决策
+    }else if(depth%2==0)
+    {//max层,我方(白)决策
         //qDebug()<<"白方决策！";
 
         POINTS P=seekPoints(board1,ALPHA,depth);
@@ -535,19 +549,22 @@ int chessAI::analyse(int (*board)[15], int depth,int alpha, int beta){
             hashkey=zobb.calculateHash(sameBoard);
             int a;
             //如果有alpha就返回alpha
-            if(zobb.probe(hashkey,depth,rescore,reflag)){
+            if(zobb.probe(hashkey,depth,rescore,reflag))
+            {
                 if(reflag==ALPHA)
                     //qDebug()<<"al";
                     a=rescore;
             }
 
             //在虚拟棋盘上落子之后继续迭代分析
-            else{
+            else
+            {
                 a=analyse(sameBoard,depth-1,alpha,beta);
                 hashkey=zobb.calculateHash(sameBoard);
                 zobb.store(hashkey,depth,a,ALPHA);
             }
-            if(a>alpha){
+            if(a>alpha)
+            {
                 alpha=a;
                 //必须要在最外层的递归中设置位置
 
@@ -598,7 +615,8 @@ int chessAI::analyse(int (*board)[15], int depth,int alpha, int beta){
 
 }
 
-bool chessAI::analyse_kill(int (*board)[15], int depth){
+bool chessAI::analyse_kill(int (*board)[15], int depth)
+{
     EVALUATION EVAL=evaluate(board);
     if(depth==0||EVAL.result!=R_DRAW){
         if(depth==0){//若抵达最深层,走一步对白棋的最好位置,若白棋还没赢则返回false
@@ -670,7 +688,8 @@ bool chessAI::analyse_kill(int (*board)[15], int depth){
 
 }
 
-QList<QPoint> chessAI::seek_kill_points(int (*board)[15],int depth){
+QList<QPoint> chessAI::seek_kill_points(int (*board)[15],int depth)
+{
     QList<QPoint> pointList;
 
     POINTS P=seekPoints(board,KILL,depth);//一般来说,能冲4或者活3的必在评分前20的点内

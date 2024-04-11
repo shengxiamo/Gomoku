@@ -46,9 +46,9 @@
    <property name="geometry">
     <rect>
      <x>630</x>
-     <y>350</y>
-     <width>101</width>
-     <height>61</height>
+     <y>430</y>
+     <width>121</width>
+     <height>41</height>
     </rect>
    </property>
    <property name="text">
@@ -59,9 +59,9 @@
    <property name="geometry">
     <rect>
      <x>630</x>
-     <y>440</y>
-     <width>101</width>
-     <height>61</height>
+     <y>490</y>
+     <width>121</width>
+     <height>41</height>
     </rect>
    </property>
    <property name="text">
@@ -72,9 +72,9 @@
    <property name="geometry">
     <rect>
      <x>630</x>
-     <y>520</y>
-     <width>101</width>
-     <height>61</height>
+     <y>550</y>
+     <width>121</width>
+     <height>41</height>
     </rect>
    </property>
    <property name="text">
@@ -147,6 +147,19 @@
    </property>
    <property name="text">
     <string>ai局面估分:</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton">
+   <property name="geometry">
+    <rect>
+     <x>630</x>
+     <y>370</y>
+     <width>121</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>提示</string>
    </property>
   </widget>
  </widget>

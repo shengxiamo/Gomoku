@@ -1,19 +1,22 @@
 #ifndef GAMEWIDGET_H
 #define GAMEWIDGET_H
 
+#include "chessAI.h"
+#include "zobrist.h"
+
 #include <QWidget>
 #include <QPainter>
 #include <QMouseEvent>
 #include <QMessageBox>
 #include <QMap>
-//#include <QRandomGenerator>
+#include <String>
 #include <QTimer>
 #include <QTime>
 #include <sys/time.h>
 #include <QDebug>
 #include <iostream>
-#include "chessAI.h"
-#include "zobrist.h"
+
+
 using namespace std;
 
 namespace Ui {
@@ -67,11 +70,13 @@ private:
 protected:
     void paintEvent(QPaintEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
-    void mouseReleaseEvent(QMouseEvent *event) override;//实际落子
+    void mouseReleaseEvent(QMouseEvent *event) override;// 检测玩家选择的实际落子
 
 private slots:
     void on_restartButton_clicked();
     void on_returnButton_clicked();
+
+    void on_pushButton_clicked();
 
 public slots:
     // 返回

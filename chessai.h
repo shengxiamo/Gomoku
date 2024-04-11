@@ -11,11 +11,11 @@
 #define BETA 2
 #define KILL 3
 
-#define C_NONE 0//棋子：黑子,白子,无子
+#define C_NONE 0// 棋子：黑子,白子,无子
 #define C_BLACK 1
 #define C_WHITE 2
 
-#define RIGHT 0//方向：向右、向上、右上、左上
+#define RIGHT 0// 方向：向右、向上、右上、左上
 #define UP 1
 #define UPRIGHT 2
 #define UPLEFT 3
@@ -47,30 +47,30 @@ enum gameResult{R_BLACK,R_WHITE,R_DRAW};// 黑棋赢，白棋赢，和棋
 struct EVALUATION{
     int score;
     gameResult result;
-    int STAT[8];//储存部分棋形的个数,下标WIN=1为白连5,LOSE=2为黑连5,FLEX4=3为白活4,BLOCK4=5为白冲4,FLEX3=7为白活3
+    int STAT[8];// 储存部分棋形的个数,下标WIN=1为白连5,LOSE=2为黑连5,FLEX4=3为白活4,BLOCK4=5为白冲4,FLEX3=7为白活3
 };
-struct POINTS{//最佳落子位置,[0]分数最高,[19]分数最低
+struct POINTS{// 最佳落子位置,[0]分数最高,[19]分数最低
     QPoint pos[20];
-    int score[20];//此处落子的局势分数
+    int score[20];// 此处落子的局势分数
 };
 struct DECISION{
-    QPoint pos;//位置
-    int eval;//对分数的评估
+    QPoint pos;// 位置
+    int eval;// 对分数的评估
 };
 
 
 class chessAI
 {
 public:
-    int chesses[15][15];//棋盘
-    DECISION decision;//储存极大极小搜索得到的要走的位置
+    int chesses[15][15];// 棋局
+    DECISION decision;// 储存极大极小搜索得到的要走的位置
     int myChesses[15][15];
-    int nodeNum=0;
-    zobrist zobb=zobrist((unsigned long long)100000);
+    int nodeNum = 0; // 博弈树中的叶子节点数
+    zobrist zobb = zobrist((unsigned long long)100000); //
 
 
-public://贪心算法部分
-    chessAI();
+public:// 贪心算法部分
+    chessAI(); // 构造函数
     int calcOnePosGreedy(int board[15][15],int row,int col,int C_ME);  // 计算某一个位置对于me的分数(贪心)
     int tupleScoreGreedy(int black,int white,int C_ME);  // 计算黑白子给定的五元组对于me的分数(贪心算法)
     QPoint getXY(int row,int col,int dir,int rel);  // 对于给定点、方向和偏移量，得到实际坐标
