@@ -149,7 +149,7 @@
     <string>ai局面估分:</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton">
+  <widget class="QPushButton" name="remindButton">
    <property name="geometry">
     <rect>
      <x>630</x>

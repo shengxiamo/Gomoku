@@ -9,23 +9,29 @@ chessAI::chessAI()
 // 检查是否在棋盘内
 bool chessAI::checkBound(int x,int y)
 {
-    if(x >=0 && x <15 && y >= 0 && y < 15)return true;
-    else return false;
+    if(x >=0 && x <15 && y >= 0 && y < 15)
+        return true;
+    else
+        return false;
 }
 // 对四个方向xy坐标的设置
 QPoint chessAI::getXY(int row, int col, int dir, int rel)
 {
     QPoint p;
-    if(dir == RIGHT){
+    if(dir == RIGHT)
+    {
         p.setX(row);
         p.setY(col + rel);
-    }else if(dir == UP){
+    }else if(dir == UP)
+    {
         p.setX(row - rel);
         p.setY(col);
-    }else if(dir == UPRIGHT){
+    }else if(dir == UPRIGHT)
+    {
         p.setX(row - rel);
         p.setY(col + rel);
-    }else if(dir == UPLEFT){
+    }else if(dir == UPLEFT)
+    {
         p.setX(row - rel);
         p.setY(col - rel);
     }
@@ -35,8 +41,10 @@ QPoint chessAI::getXY(int row, int col, int dir, int rel)
 int chessAI::calcOnePosGreedy(int board[15][15],int row, int col, int C_ME)
 {
     int sum = 0;
-    for(int i = 0;i < 4;++i){// 四个方向
-        for(int j = 0;j < 5;++j){// 每个方向上最多5个五元组
+    for(int i = 0;i < 4;++i) // 一次遍历四个方向：横向、纵向、主对角线、副对角线
+    {
+        for(int j = 0;j < 5;++j)// 每个方向上最多5个五元组
+        {
             // 顶点需要改变，终点无需改变，评估了该棋子两侧各四个棋子
             QPoint start = getXY(row, col, RIGHT + i, j - 4);// 五元组顶点位置
             QPoint end = getXY(start.x(),start.y(),RIGHT + i,4);// 五元组最远位置
@@ -510,12 +518,7 @@ int chessAI::analyse(int (*board)[15], int depth,int alpha, int beta)
     EVALUATION EVAL=evaluate(board);
     int board1[15][15];
     copyBoard(board,board1);
-    //如果有精确结果就返回精确结果
-    /*hashkey=zobb.calculateHash(board);
-    if(zobb.probe(hashkey,depth,rescore,reflag)){
-        if(reflag==EXACT)
-            return rescore;
-    }*/
+
     if(depth==0||EVAL.result!=R_DRAW) // 抵达最深层或模拟落子可以分出输赢，那么直接返回结果，不需要再搜索
     {
         nodeNum+=1;  // 叶子节点数+1
@@ -685,7 +688,6 @@ bool chessAI::analyse_kill(int (*board)[15], int depth)
         //无需剪枝
         return analyse_kill(sameBoard,depth-1);
     }
-
 }
 
 QList<QPoint> chessAI::seek_kill_points(int (*board)[15],int depth)
@@ -697,7 +699,8 @@ QList<QPoint> chessAI::seek_kill_points(int (*board)[15],int depth)
     int sameBoard[15][15];
     copyBoard(board,sameBoard);
 
-    for(int i=0;i<20;++i){
+    for(int i=0;i<20;++i)
+    {
         sameBoard[P.pos[i].x()][P.pos[i].y()]=C_WHITE;//模拟落子
         if(evaluate(sameBoard).STAT[WIN]>0){//产生连5
             pointList.append(P.pos[i]);

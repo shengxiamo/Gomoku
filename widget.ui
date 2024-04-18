@@ -43,13 +43,18 @@
    <property name="geometry">
     <rect>
      <x>500</x>
-     <y>70</y>
+     <y>40</y>
      <width>121</width>
      <height>81</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <family>楷体</family>
+    </font>
+   </property>
    <property name="text">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:20pt; font-weight:700; color:#fed937;&quot;&gt;五子棋&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:20pt; font-weight:700; font-style:italic; color:#000000;&quot;&gt;五子棋&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
  </widget>

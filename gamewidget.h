@@ -76,7 +76,7 @@ private slots:
     void on_restartButton_clicked();
     void on_returnButton_clicked();
 
-    void on_pushButton_clicked();
+    void on_remindButton_clicked();
 
 public slots:
     // 返回

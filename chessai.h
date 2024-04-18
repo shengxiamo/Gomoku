@@ -44,7 +44,8 @@ enum gameStatus{UNDERWAY,FINISH};
 enum gameTurn{T_BLACK,T_WHITE};// 轮到谁下
 enum gameResult{R_BLACK,R_WHITE,R_DRAW};// 黑棋赢，白棋赢，和棋
 
-struct EVALUATION{
+struct EVALUATION
+{
     int score;
     gameResult result;
     int STAT[8];// 储存部分棋形的个数,下标WIN=1为白连5,LOSE=2为黑连5,FLEX4=3为白活4,BLOCK4=5为白冲4,FLEX3=7为白活3
@@ -53,7 +54,8 @@ struct POINTS{// 最佳落子位置,[0]分数最高,[19]分数最低
     QPoint pos[20];
     int score[20];// 此处落子的局势分数
 };
-struct DECISION{
+struct DECISION
+{
     QPoint pos;// 位置
     int eval;// 对分数的评估
 };
@@ -87,7 +89,6 @@ public:  // 博弈树搜索部分
 
     bool analyse_kill(int board[15][15],int depth);// 计算杀棋,若找到杀棋则返回true
     QList<QPoint> seek_kill_points(int board[15][15],int depth);// 找白棋的连5,活4,冲4,活3的杀棋位置
-
 
 private:
     int tuple6type[4][4][4][4][4][4];// 棋型辨识数组,0无子,1黑子,2白子,3边界

@@ -8,7 +8,7 @@ Widget::Widget(QWidget *parent)
     ui->setupUi(this);
     game = new gameWidget;
     connect(game,&gameWidget::returnSignal,this,&Widget::show);
-    this->setWindowTitle("西大五子棋");
+    this->setWindowTitle("五子棋");
     background = QPixmap(":/images/ganyu.jpg");
 }
 

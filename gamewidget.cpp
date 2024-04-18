@@ -6,7 +6,7 @@ gameWidget::gameWidget(QWidget *parent)
     , ui(new Ui::gameWidget)
 {
     ui->setupUi(this);
-    this->setWindowTitle("西大五子棋");
+    this->setWindowTitle("五子棋");
     for(int i = 0;i < 15;++i){// 棋盘左上角点为(20,20),每格间距为40
         for(int j = 0;j < 15;++j){
             chessboard[i][j].setX(20 + 40 * i);
@@ -173,27 +173,35 @@ bool gameWidget::chessOneByPlayer(){
     return false;
 }
 
-void gameWidget::mouseReleaseEvent(QMouseEvent *event){ // 玩家点击鼠标左键确认落子
-    if(is_in_chessboard && mode == PLAYER && status != FINISH){
-        if(chessOneByPlayer()){
+void gameWidget::mouseReleaseEvent(QMouseEvent *event)
+{ // 玩家点击鼠标左键确认落子
+    if(is_in_chessboard && mode == PLAYER && status != FINISH)
+    {
+        if(chessOneByPlayer())
+        {
             if(status == FINISH){
                 bool newgame=deadWindow(&msg);
-                if(newgame) initializeGame();
+                if(newgame)
+                    initializeGame();
             }
         }
     }
-    else if (is_in_chessboard && mode == AI && status != FINISH) {
-        if(chessOneByPlayer()){
+    else if (mode == AI && status != FINISH)
+    {
+        if(chessOneByPlayer())
+        {
             QCoreApplication::processEvents();
             if(status == UNDERWAY){
                 chessOneByAi();
-                if(status == FINISH){
+                if(status == FINISH)
+                {
                     bool newgame = deadWindow(&msg);
                     if(newgame)
                         initializeGame();
                 }
             }
-            else if(status == FINISH){
+            else if(status == FINISH)
+            {
                 bool newgame = deadWindow(&msg);
                 if(newgame)
                     initializeGame();
@@ -202,27 +210,25 @@ void gameWidget::mouseReleaseEvent(QMouseEvent *event){ // 玩家点击鼠标左
     }
 }
 
-void gameWidget::initializeGame(){
+void gameWidget::initializeGame()
+{
 
-    int static count=0;
-    qDebug()<<"游戏第"<<count<<"次初始化";
-    if(mode==PLAYER)qDebug()<<"上一次游玩的是玩家模式";
-    else if(mode==AI) qDebug()<<"上一次游玩的是人机模式";
-    else if(mode==NONE) qDebug()<<"无模式";
-    //ai.zobb.initRandomTable();
-    for(int i=0;i<15;++i){
-        for(int j=0;j<15;++j){
-            ai.chesses[i][j]=C_NONE;
-            usedChesses[i][j]=0;
+    int static count = 0;
+    for (int i = 0;i < 15;++i)
+    {
+        for (int j = 0;j < 15;++j)
+        {
+            ai.chesses[i][j] = C_NONE;
+            usedChesses[i][j] = 0;
         }
     }
 
-    status=UNDERWAY;
-    turn=T_BLACK;
-    cursorRow=-1;
-    cursorCol=-1;
+    status = UNDERWAY;
+    turn = T_BLACK;
+    cursorRow = -1;
+    cursorCol = -1;
     count++;
-    numOfChess=0;
+    numOfChess = 0;
 }
 
 void gameWidget::on_restartButton_clicked()
@@ -232,47 +238,61 @@ void gameWidget::on_restartButton_clicked()
     this->show(); //关闭并重新渲染一遍
 }
 
-bool gameWidget::isDeadGame(){
+bool gameWidget::isDeadGame()
+{
     int chessNum=0;
-    for(int i=0;i<15;++i)
-        for(int j=0;j<15;++j)
-            if(ai.chesses[i][j]!=C_NONE)chessNum++;
-    if(chessNum==15*15)return true;
-    else return false;
+    for (int i = 0;i<15;++i)
+        for (int j = 0;j<15;++j)
+            if (ai.chesses[i][j] != C_NONE)
+                chessNum++;
+    if (chessNum==15*15)
+        return true;
+    else
+        return false;
 }
 
 // 检验落子的有效性
-bool gameWidget::isLegalMove(int row, int col){
-    if(ai.chesses[row][col]==C_NONE)return true;
-    else return false;
+bool gameWidget::isLegalMove(int row, int col)
+{
+    if (ai.chesses[row][col] == C_NONE)
+        return true;
+    else
+        return false;
 }
 bool gameWidget::reIsLegalMove(int row, int col){
-    if(usedChesses[row][col]==0)return true;
-    else return false;
+    if (usedChesses[row][col]==0)
+        return true;
+    else
+        return false;
 }
 
 // 游戏结束窗口
 bool gameWidget::deadWindow(QMessageBox *msg){
-    int static myCount=0;
+    int static myCount = 0;
     msg->setIcon(QMessageBox::Critical);
-    if(myCount==0){
+    if (myCount == 0)
+    {
         msg->addButton(QMessageBox::Yes);
         msg->addButton(QMessageBox::No);
     }
 
-    gameResult result=ai.evaluate(ai.chesses).result;
-    if(result!=R_DRAW) status=FINISH;
-    if(result==R_BLACK){
+    gameResult result = ai.evaluate(ai.chesses).result;
+    if (result != R_DRAW)
+        status = FINISH;
+    if (result == R_BLACK)
+    {
         qDebug()<<"黑棋赢";
         msg->setText("黑棋赢\n想开始下一局吗？");
         score_black++;
     }
-    else if(result==R_WHITE){
+    else if (result == R_WHITE)
+    {
         qDebug()<<"白棋赢";
         msg->setText("白棋赢\n想开始下一局吗？");
         score_white++;
     }
-    else{
+    else
+    {
         qDebug()<<"平局";
         msg->setText("平局\n想开始下一局吗？");
     }
@@ -280,12 +300,15 @@ bool gameWidget::deadWindow(QMessageBox *msg){
     ui->lcd_white->display(score_white);
     int cliResult = msg->exec();
     myCount++;
-    if (cliResult == QMessageBox::Yes) {
+    if (cliResult == QMessageBox::Yes)
+    {
         // 用户点击了Yes按钮
         // 在这里执行相关操作
         initializeGame();
         return true;
-    } else {
+    }
+    else
+    {
         // 用户点击了No按钮
         // 在这里执行相关操作
         //此处的操作应该是让棋盘删除黑棋和白棋的最后一颗棋子
@@ -310,19 +333,21 @@ void gameWidget::chessOneByAi()
     float timeuse;//ai计算耗时
     gettimeofday(&tpstart,NULL);
 
-    ai.nodeNum=0;
+    ai.nodeNum = 0;
 
-    if(!ai.analyse_kill(ai.chesses,16))
+    if (!ai.analyse_kill(ai.chesses,16))
     {
         qDebug()<<"没找到杀棋";
         //如果没有杀棋就用六层的博弈树
         ai.analyse(ai.chesses,6,-INT_MAX,INT_MAX);
 
-    }else{
+    }
+    else
+    {
         qDebug()<<"找到了杀棋";
     }
 
-    QPoint p=ai.decision.pos;
+    QPoint p = ai.decision.pos;
 
     qDebug()<<"ai落子:"<<p.x()<<","<<p.y();
     int zeroChess;
@@ -330,56 +355,59 @@ void gameWidget::chessOneByAi()
     {
         oneChessMove(p.x(),p.y());
         // 记录0，0位置棋子的颜色
-        if(p.x()==0&&p.y()==0)
+        if(p.x() == 0&&p.y() == 0)
         {
-            zeroChess=ai.chesses[p.x()][p.y()];
+            zeroChess = ai.chesses[p.x()][p.y()];
         }
         // 记录最新一步的落子位置
-        lastCol=p.y();
-        lastRow=p.x();
+        lastCol = p.y();
+        lastRow = p.x();
     }
-    else {
+    else
+    {
         // 出Bug就摆烂随便下
-        turn=T_WHITE;
-        int roll=0;
-        for(int row=0;row<15;row++)
+        turn = T_WHITE;
+        int roll = 0;
+        for (int row = 0;row < 15;row++)
         {
-            for(int col=0;col<15;col++)
+            for(int col = 0;col < 15;col++)
             {
-                if(usedChesses[row][col]==0)
+                if(usedChesses[row][col] == 0)
                 {
                     oneChessMove(row,col);
                     // 记录最新一步的落子位置
-                    lastCol=col;
-                    lastRow=row;
-                    roll=1;
+                    lastCol = col;
+                    lastRow = row;
+                    roll = 1;
                     break;
                 }
             }
-            if(roll) break;
+            if (roll)
+                break;
         }
-
     }
 
     qDebug()<<"ai所求局势得分:"<<ai.evaluate(ai.chesses).score;
 
     gettimeofday(&tpend,NULL);
-    timeuse=(1000000*(tpend.tv_sec-tpstart.tv_sec) + tpend.tv_usec-tpstart.tv_usec)/1000000.0;
+    timeuse = (1000000 * (tpend.tv_sec - tpstart.tv_sec) + tpend.tv_usec - tpstart.tv_usec) / 1000000.0;// 将时间化为秒
     qDebug()<<timeuse<<"s";
 
-    QString text="ai计算耗时:"+QString::number(timeuse)+"s";
+    QString text = "ai计算耗时:" + QString::number(timeuse) + "s";
     this->ui->lb_timeuse->setText(text);
 
     text="ai叶结点数:"+QString::number(ai.nodeNum);
     this->ui->lb_nodeNum->setText(text);
 
-    text="ai局面估分:"+QString::number(ai.evaluate(ai.chesses).score);
+    text="ai局面估分:" + QString::number(ai.evaluate(ai.chesses).score);
     this->ui->lb_eval->setText(text);
 }
 
-void gameWidget::regret(){
+void gameWidget::regret()
+{
     qDebug()<<"regret";
-    if(numOfChess<=0){
+    if(numOfChess <= 0)
+    {
         initializeGame1();
         return;
     }
@@ -390,58 +418,71 @@ void gameWidget::regret(){
     update();
 }
 //悔棋实现函数
-void gameWidget::exRegret(){
+void gameWidget::exRegret()
+{
     int col1,col2,row1,row2;
-    if(mode==AI){
-        //遍历棋谱，找到最后两个下的子，仍是玩家走棋
-        for(int row=0;row<15;row++){
-            for(int col=0;col<15;col++){
-                if(usedChesses[row][col]==numOfChess){
-                    row1=row;
-                    col1=col;
-                    //务必在删除棋子后清空棋谱，不然会导致漏删棋子
-                    usedChesses[row][col]=0;
+    int game_result = ai.evaluate(ai.chesses).result;
+    if (mode == AI && (status != FINISH || game_result == R_WHITE)) // 游戏未结束，或者白棋获胜，悔两步棋
+    {
+        // 遍历棋谱，找到最后两个下的子，仍是玩家走棋
+        for (int row = 0;row < 15;row++)
+        {
+            for (int col = 0;col < 15;col++)
+            {
+                if (usedChesses[row][col] == numOfChess)
+                {
+                    row1 = row;
+                    col1 = col;
+                    // 务必在删除棋子后清空棋谱，不然会导致漏删棋子
+                    usedChesses[row][col] = 0;
                 }
-                if(usedChesses[row][col]==numOfChess-1){
-                    row2=row;
-                    col2=col;
-                    usedChesses[row][col]=0;
+                if (usedChesses[row][col] == numOfChess-1)
+                {
+                    row2 = row;
+                    col2 = col;
+                    usedChesses[row][col] = 0;
                 }
-                if(usedChesses[row][col]==numOfChess-2){
-                    lastRow=row;
+                if (usedChesses[row][col] == numOfChess - 2)
+                {
+                    lastRow = row;
                     lastCol=col;
                 }
             }
         }
-        ai.chesses[row1][col1]=C_NONE;
-        ai.chesses[row2][col2]=C_NONE;
-        numOfChess-=2;
-        if(numOfChess<=0){
+        ai.chesses[row1][col1] = C_NONE;
+        ai.chesses[row2][col2] = C_NONE;
+        numOfChess -= 2;
+        if (numOfChess <= 0)
             initializeGame1();
-        }
     }
-    //玩家模式只需要一步悔棋
-    else if(mode==PLAYER){
-        for(int row=0;row<15;row++){
-            for(int col=0;col<15;col++){
-                if(usedChesses[row][col]==numOfChess){
-                    row1=row;
-                    col1=col;
-                    usedChesses[row][col]=0;
+    else if (mode == PLAYER || (status == FINISH && game_result == R_BLACK))  // 玩家模式或者黑方获胜结束时只需要一步悔棋
+    {
+        for (int row = 0;row < 15;row++)
+        {
+            for (int col = 0;col < 15;col++)
+            {
+                if (usedChesses[row][col] == numOfChess)
+                {
+                    row1 = row;
+                    col1 = col;
+                    usedChesses[row][col] = 0;
                 }
-                if(usedChesses[row][col]==numOfChess-1){
-                    lastRow=row;
-                    lastCol=col;
+                if (usedChesses[row][col] == numOfChess - 1)
+                {
+                    lastRow = row;
+                    lastCol = col;
                 }
             }
         }
         //删除最后一颗子
-        ai.chesses[row1][col1]=C_NONE;
-        if(turn==T_WHITE) turn=T_BLACK;
-        else turn=T_WHITE;
+        ai.chesses[row1][col1] = C_NONE;
+        if (turn == T_WHITE)
+            turn = T_BLACK;
+        else
+            turn = T_WHITE;
         numOfChess--;
     }
-    status=UNDERWAY;
+    status = UNDERWAY;
 }
 
 void gameWidget::initializeGame1()  // 重新开始
@@ -453,11 +494,12 @@ void gameWidget::initializeGame1()  // 重新开始
     this->show();
 }
 
-void gameWidget::returnPush() {
+void gameWidget::returnPush()
+{
     emit returnSignal();
 }
 
-void gameWidget::on_pushButton_clicked()
+void gameWidget::on_remindButton_clicked() // 提示按钮
 {
     if (mode == AI)
     {
@@ -475,65 +517,64 @@ void gameWidget::on_pushButton_clicked()
                 int chessesReversed[15][15];
                 this->ai.reverseBoard(this->ai.chesses, chessesReversed);
 
-                if(!ai.analyse_kill(chessesReversed,16))
+                if (!ai.analyse_kill(chessesReversed, 16))
                 {
-                    qDebug()<<"没找到杀棋";
-                    //如果没有杀棋就用六层的博弈树
-                    ai.analyse(chessesReversed,6,-INT_MAX,INT_MAX);
-
-                }else{
-                    qDebug()<<"找到了杀棋";
+                    ai.analyse(chessesReversed, 6, -INT_MAX, INT_MAX);
                 }
 
-                QPoint p=ai.decision.pos;
+                QPoint p = ai.decision.pos;
 
-                qDebug()<<"ai落子:"<<p.x()<<","<<p.y();
                 int zeroChess;
-                if(reIsLegalMove(p.x(),p.y())){
-                    oneChessMove(p.x(),p.y());
+                if (reIsLegalMove(p.x(), p.y()))
+                {
+                    oneChessMove(p.x(), p.y());
+                    QCoreApplication::processEvents();
                     // 记录0，0位置棋子的颜色
-                    if(p.x()==0&&p.y()==0){
-                        zeroChess=ai.chesses[p.x()][p.y()];
-                    }
+                    if (p.x() == 0 && p.y() == 0)
+                        zeroChess = ai.chesses[p.x()][p.y()];
                     // 记录最新一步的落子位置
-                    lastCol=p.y();
-                    lastRow=p.x();
+                    lastCol = p.y();
+                    lastRow = p.x();
                 }
-                else {
-                    // 出Bug就摆烂随便下
-                    turn=T_WHITE;
-                    int roll=0;
-                    for(int row=0;row<15;row++){
-                        for(int col=0;col<15;col++){
-                            if(usedChesses[row][col]==0){
+                else
+                {
+                    // turn = T_WHITE;
+                    int roll = 0;
+                    for (int row = 0;row < 15;row++)
+                    {
+                        for (int col = 0;col < 15;col++)
+                        {
+                            if (usedChesses[row][col] == 0)
+                            {
                                 oneChessMove(row,col);
+                                QCoreApplication::processEvents();
                                 // 记录最新一步的落子位置
-                                lastCol=col;
-                                lastRow=row;
-                                roll=1;
+                                lastCol = col;
+                                lastRow = row;
+                                roll = 1;
                                 break;
                             }
                         }
-                        if(roll) break;
+                        if (roll)
+                            break;
                     }
                 }
             }
         }
-
-        if(status == UNDERWAY)
+        if (status == UNDERWAY)
         {
             chessOneByAi();
             if(status == FINISH)
             {
                 bool newgame = deadWindow(&msg);
-                if(newgame)
+                if (newgame)
                     initializeGame();
             }
         }
-        else if(status == FINISH)
+        else if (status == FINISH)
         {
             bool newgame = deadWindow(&msg);
-            if(newgame)
+            if (newgame)
                 initializeGame();
         }
     }
