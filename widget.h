@@ -32,4 +32,5 @@ private:
     gameWidget *game;
     QPixmap background; // 声明一个QPixmap对象用于存储背景图片
 };
+
 #endif // WIDGET_H

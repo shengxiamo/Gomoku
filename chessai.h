@@ -84,7 +84,7 @@ public:  // 博弈树搜索部分
     POINTS seekPoints(int board[15][15],int flag,int depth);  // 生成对于白子的最佳20个落子位置及分数
     void copyBoard(int A[15][15],int B[15][15]);  // 将A棋盘复制到B棋盘
     void reverseBoard(int A[15][15],int B[15][15]);  // 将A棋盘黑白子颠倒结果传给B棋盘
-    EVALUATION evaluate(int board[15][15],bool needPrint=false);  // 对棋局board的黑子的局势估值函数,还可以判断输赢
+    EVALUATION evaluate(int board[15][15]);  // 对棋局board的黑子的局势估值函数,还可以判断输赢
     int analyse(int board[15][15],int depth,int alpha,int beta);// 博弈树极大极小搜索加ab剪枝
 
     bool analyse_kill(int board[15][15],int depth);// 计算杀棋,若找到杀棋则返回true
@@ -94,7 +94,5 @@ private:
     int tuple6type[4][4][4][4][4][4];// 棋型辨识数组,0无子,1黑子,2白子,3边界
     POINTS points;// 最佳落子位置
 };
-
-
 
 #endif // chessAI_H

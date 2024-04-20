@@ -41,22 +41,26 @@ QPoint chessAI::getXY(int row, int col, int dir, int rel)
 int chessAI::calcOnePosGreedy(int board[15][15],int row, int col, int C_ME)
 {
     int sum = 0;
-    for(int i = 0;i < 4;++i) // 一次遍历四个方向：横向、纵向、主对角线、副对角线
+    for (int i = 0;i < 4;++i) // 一次遍历四个方向：横向、纵向、主对角线、副对角线
     {
-        for(int j = 0;j < 5;++j)// 每个方向上最多5个五元组
+        for (int j = 0;j < 5;++j)// 每个方向上最多5个五元组
         {
             // 顶点需要改变，终点无需改变，评估了该棋子两侧各四个棋子
             QPoint start = getXY(row, col, RIGHT + i, j - 4);// 五元组顶点位置
             QPoint end = getXY(start.x(),start.y(),RIGHT + i,4);// 五元组最远位置
-            if(checkBound(start.x(),start.y()) && checkBound(end.x(), end.y())){//若五元组下标均合法
+            if (checkBound(start.x(),start.y()) && checkBound(end.x(), end.y()))//若五元组下标均合法
+            {
                 int blackChess = 0;
                 int whiteChess = 0;
-                for(int k = 0;k < 5;++k){// 对五元组5个位置考察
+                for (int k = 0;k < 5;++k)// 对五元组5个位置考察
+                {
                     // Right+i是为了遍历四个方向
                     // 在这九个棋子中，按顺序每次取五个来探查
-                    QPoint tmp = getXY(start.x(), start.y(), RIGHT + i,k);
-                    if(board[tmp.x()][tmp.y()] == C_BLACK)blackChess++;
-                    if(board[tmp.x()][tmp.y()] == C_WHITE)whiteChess++;
+                    QPoint tmp = getXY(start.x(), start.y(), RIGHT + i, k);
+                    if (board[tmp.x()][tmp.y()] == C_BLACK)
+                        blackChess++;
+                    if (board[tmp.x()][tmp.y()] == C_WHITE)
+                        whiteChess++;
                 }
                 sum += tupleScoreGreedy(blackChess, whiteChess, C_ME);
             }
@@ -68,32 +72,54 @@ int chessAI::calcOnePosGreedy(int board[15][15],int row, int col, int C_ME)
 int chessAI::tupleScoreGreedy(int black, int white, int C_ME)
 {
     // 连5
-    if(C_ME == C_BLACK && black == 5)return 9999999;
-    if(C_ME == C_WHITE && white == 5)return 9999999;
+    if (C_ME == C_BLACK && black == 5)
+        return 9999999;
+    if (C_ME == C_WHITE && white == 5)
+        return 9999999;
     // 全空
-    if(black == 0 && white == 0)return 7;
-    // polluted
+    if (black == 0 && white == 0)
+        return 7;
     // 如果这个五元组既有白棋又有黑棋，0分
-    else if(black>=1&&white>=1)return 0;
+    else if (black>=1&&white>=1)
+        return 0;
     // 分成ai执黑和ai执子白来讨论
-    else if(C_ME == C_BLACK){
-        if(black == 1 && white == 0)return 35;
-        else if(black == 2&&white == 0)return 800;
-        else if(black == 3&&white == 0)return 15000;
-        else if(black == 4&&white==0)return 800000;
-        else if(black==0&&white==1)return 15;
-        else if(black==0&&white==2)return 400;
-        else if(black==0&&white==3)return 1800;
-        else return 100000;
-    }else{
-        if(black==1&&white==0)return 15;
-        else if(black==2&&white==0)return 400;
-        else if(black==3&&white==0)return 1800;
-        else if(black==4&&white==0)return 100000;
-        else if(black==0&&white==1)return 35;
-        else if(black==0&&white==2)return 800;
-        else if(black==0&&white==3)return 15000;
-        else return 800000;
+    else if (C_ME == C_BLACK)
+    {
+        if (black == 1 && white == 0)
+            return 35;
+        else if (black == 2 && white == 0)
+            return 800;
+        else if (black == 3 && white == 0)
+            return 15000;
+        else if (black == 4 && white == 0)
+            return 800000;
+        else if (black == 0 && white == 1)
+            return 15;
+        else if (black == 0 && white == 2)
+            return 400;
+        else if (black == 0 && white == 3)
+            return 1800;
+        else
+            return 100000;
+    }
+    else
+    {
+        if (black == 1 && white == 0)
+            return 15;
+        else if (black == 2 && white == 0)
+            return 400;
+        else if (black == 3 && white == 0)
+            return 1800;
+        else if (black == 4 && white == 0)
+            return 100000;
+        else if (black == 0 && white == 1)
+            return 35;
+        else if (black == 0 && white == 2)
+            return 800;
+        else if (black == 0 && white == 3)
+            return 15000;
+        else
+            return 800000;
     }
 
 }
@@ -103,11 +129,15 @@ QPoint chessAI::findBestMoveGreedy(int C_ME)
     int bestScore = -1000;
     // 这个地方不应该设置最佳点位的默认值为0，当找不到最佳位置的时候，ai会选择下在0,0上，如果多次找不到最佳点位，就会多次下在0，0上
     int bestRow = -1,bestCol = -1;
-    for(int i = 0;i < 15;++i){
-        for(int j = 0;j < 15;++j){
-            if(chesses[i][j] == C_NONE){//空的位置
+    for (int i = 0;i < 15;++i)
+    {
+        for (int j = 0;j < 15;++j)
+        {
+            if (chesses[i][j] == C_NONE) //空的位置
+            {
                 int score = calcOnePosGreedy(chesses, i, j, C_ME);
-                if(bestScore < score){
+                if (bestScore < score)
+                {
                     bestScore = score;
                     bestRow = i;
                     bestCol = j;
@@ -116,17 +146,21 @@ QPoint chessAI::findBestMoveGreedy(int C_ME)
         }
     }
     // 如果找不到最佳位置，就选择棋盘上第一个能找到的空位
-    if(bestRow < 0 || bestCol < 0){
-        for(int i = 0;i < 15;++i){
-            for(int j = 0;j < 15;++j){
-                if(chesses[i][j] == C_NONE){//空的位置
+    if (bestRow < 0 || bestCol < 0)
+    {
+        for (int i = 0;i < 15;++i)
+        {
+            for (int j = 0;j < 15;++j)
+            {
+                if (chesses[i][j] == C_NONE) //空的位置
+                {
                     bestRow = i;
                     bestCol = j;
                 }
             }
         }
     }
-    QPoint p(bestRow,bestCol);
+    QPoint p(bestRow, bestCol);
 
     return p;
 }
@@ -191,127 +225,192 @@ void chessAI::init_tuple6type()
     tuple6type[0][0][0][0][1][0] = flex1;
 
     int p1,p2,p3,p4,p5,p6,x,y,ix,iy;// x:左5中黑个数,y:左5中白个数,ix:右5中黑个数,iy:右5中白个数
-    for(p1 = 0;p1<4;++p1)
+    for (p1 = 0;p1 < 4;++p1)
     {
-        for(p2 = 0;p2<3;++p2){
-            for(p3 = 0;p3<3;++p3){
-                for(p4 = 0;p4<3;++p4){
-                    for(p5 = 0;p5<3;++p5){
-                        for(p6 = 0;p6<4;++p6){
+        for (p2 = 0;p2 < 3;++p2)
+        {
+            for (p3 = 0;p3 < 3;++p3)
+            {
+                for (p4 = 0;p4 < 3;++p4)
+                {
+                    for (p5 = 0;p5 < 3;++p5)
+                    {
+                        for (p6 = 0;p6 < 4;++p6)
+                        {
 
                             x = y = ix = iy = 0;
-                            //p1为左，p6为右，其余为中间，所以两个数都自增
-                            if(p1 == 1)x++;
-                            else if(p1 == 2)y++;
+                            // p1为左，p6为右，其余为中间，所以两个数都自增
+                            if (p1 == 1)
+                                x++;
+                            else if (p1 == 2)
+                                y++;
 
-                            if(p2 == 1){x++;ix++;}
-                            else if(p2==2){y++;iy++;}
+                            if (p2 == 1)
+                            {
+                                x++;
+                                ix++;
+                            }
+                            else if (p2 == 2)
+                            {
+                                y++;
+                                iy++;
+                            }
 
-                            if(p3 == 1){x++;ix++;}
-                            else if(p3 == 2){y++;iy++;}
+                            if (p3 == 1)
+                            {
+                                x++;
+                                ix++;
+                            }
+                            else if (p3 == 2)
+                            {
+                                y++;
+                                iy++;
+                            }
 
-                            if(p4 == 1){x++;ix++;}
-                            else if(p4 == 2){y++;iy++;}
+                            if (p4 == 1)
+                            {
+                                x++;
+                                ix++;
+                            }
+                            else if (p4 == 2)
+                            {
+                                y++;
+                                iy++;
+                            }
 
-                            if(p5 == 1){x++;ix++;}
-                            else if(p5 == 2){y++;iy++;}
+                            if (p5 == 1)
+                            {
+                                x++;
+                                ix++;
+                            }
+                            else if (p5 == 2)
+                            {
+                                y++;
+                                iy++;
+                            }
 
-                            if(p6 == 1)ix++;
-                            else if(p6 == 2)iy++;
+                            if (p6 == 1)
+                                ix++;
+                            else if (p6 == 2)
+                                iy++;
 
-                            if(p1 == 3 || p6 == 3){//有边界
-                                if(p1 == 3 && p6 != 3){//左边界
-                                    //白冲4
-                                    if(ix == 0 && iy == 4){//若右边有空位是活4也没关系，因为活4权重远大于冲4，再加上冲4权重变化可以不计
+                            if (p1 == 3 || p6 == 3)// 有边界
+                            {
+                                if (p1 == 3 && p6 != 3)// 左边界
+                                {
+                                    // 白冲4
+                                    if (ix == 0 && iy == 4)// 若右边有空位是活4也没关系，因为活4权重远大于冲4，再加上冲4权重变化可以不计
+                                    {
                                         if(tuple6type[p1][p2][p3][p4][p5][p6] == 0)
                                             tuple6type[p1][p2][p3][p4][p5][p6] = BLOCK4;
                                     }
-                                    //黑冲4
-                                    if(ix == 4 && iy == 0){
-                                        if(tuple6type[p1][p2][p3][p4][p5][p6] == 0)
+                                    // 黑冲4
+                                    if (ix == 4 && iy == 0)
+                                    {
+                                        if (tuple6type[p1][p2][p3][p4][p5][p6] == 0)
                                             tuple6type[p1][p2][p3][p4][p5][p6] = block4;
                                     }
-                                    //白眠3
-                                    if(ix == 0 && iy == 3){
-                                        if(tuple6type[p1][p2][p3][p4][p5][p6] == 0)
+                                    // 白眠3
+                                    if (ix == 0 && iy == 3)
+                                    {
+                                        if (tuple6type[p1][p2][p3][p4][p5][p6] == 0)
                                             tuple6type[p1][p2][p3][p4][p5][p6]=BLOCK3;
                                     }
-                                    //黑眠3
-                                    if(ix == 3 && iy == 0){
-                                        if(tuple6type[p1][p2][p3][p4][p5][p6] == 0)
+                                    // 黑眠3
+                                    if (ix == 3 && iy == 0)
+                                    {
+                                        if (tuple6type[p1][p2][p3][p4][p5][p6] == 0)
                                             tuple6type[p1][p2][p3][p4][p5][p6]=block3;
                                     }
-                                    //白眠2
-                                    if(ix == 0 && iy == 2){
+                                    // 白眠2
+                                    if(ix == 0 && iy == 2)
+                                    {
                                         if(tuple6type[p1][p2][p3][p4][p5][p6] == 0)
                                             tuple6type[p1][p2][p3][p4][p5][p6] = BLOCK2;
                                     }
-                                    //黑眠2
-                                    if(ix == 2 && iy == 0){
-                                        if(tuple6type[p1][p2][p3][p4][p5][p6] == 0)
+                                    // 黑眠2
+                                    if (ix == 2 && iy == 0)
+                                    {
+                                        if (tuple6type[p1][p2][p3][p4][p5][p6] == 0)
                                             tuple6type[p1][p2][p3][p4][p5][p6] = block2;
                                     }
-                                }else if(p6 == 3 && p1 != 3){//右边界
-                                    //白冲4
-                                    if(x == 0 && y == 4){
-                                        if(tuple6type[p1][p2][p3][p4][p5][p6] == 0)
+                                }
+                                else if (p6 == 3 && p1 != 3)// 右边界
+                                {
+                                    // 白冲4
+                                    if (x == 0 && y == 4)
+                                    {
+                                        if (tuple6type[p1][p2][p3][p4][p5][p6] == 0)
                                             tuple6type[p1][p2][p3][p4][p5][p6] = BLOCK4;
                                     }
-                                    //黑冲4
-                                    if(x==4 && y==0){
-                                        if(tuple6type[p1][p2][p3][p4][p5][p6]==0)
+                                    // 黑冲4
+                                    if (x==4 && y==0)
+                                    {
+                                        if (tuple6type[p1][p2][p3][p4][p5][p6]==0)
                                             tuple6type[p1][p2][p3][p4][p5][p6]=block4;
                                     }
-                                    //黑眠3
-                                    if(x == 3 && y == 0){
-                                        if(tuple6type[p1][p2][p3][p4][p5][p6] == 0)
+                                    // 黑眠3
+                                    if (x == 3 && y == 0)
+                                    {
+                                        if (tuple6type[p1][p2][p3][p4][p5][p6] == 0)
                                             tuple6type[p1][p2][p3][p4][p5][p6] = BLOCK3;
                                     }
-                                    //白眠3
-                                    if(x == 0 && y == 3){
-                                        if(tuple6type[p1][p2][p3][p4][p5][p6] == 0)
+                                    // 白眠3
+                                    if (x == 0 && y == 3)
+                                    {
+                                        if (tuple6type[p1][p2][p3][p4][p5][p6] == 0)
                                             tuple6type[p1][p2][p3][p4][p5][p6] = block3;
                                     }
-                                    //黑眠2
-                                    if(x == 2 && y == 0){
-                                        if(tuple6type[p1][p2][p3][p4][p5][p6] == 0)
+                                    // 黑眠2
+                                    if (x == 2 && y == 0)
+                                    {
+                                        if (tuple6type[p1][p2][p3][p4][p5][p6] == 0)
                                             tuple6type[p1][p2][p3][p4][p5][p6] = BLOCK2;
                                     }
-                                    //白眠2
-                                    if(x == 0&& y == 2){
-                                        if(tuple6type[p1][p2][p3][p4][p5][p6] == 0)
+                                    // 白眠2
+                                    if (x == 0&& y == 2)
+                                    {
+                                        if (tuple6type[p1][p2][p3][p4][p5][p6] == 0)
                                             tuple6type[p1][p2][p3][p4][p5][p6] = block2;
                                     }
                                 }
-                            }else{//无边界
-                                //白冲4
-                                if((x == 0 && y == 4)||(ix == 0 && iy == 4)){
-                                    if(tuple6type[p1][p2][p3][p4][p5][p6] == 0)
+                            }
+                            else// 无边界
+                            {
+                                // 白冲4
+                                if ((x == 0 && y == 4) || (ix == 0 && iy == 4))
+                                {
+                                    if (tuple6type[p1][p2][p3][p4][p5][p6] == 0)
                                         tuple6type[p1][p2][p3][p4][p5][p6]=BLOCK4;
                                 }
-                                //黑冲4
-                                if((x == 4 && y == 0)||(ix == 4 && iy == 0)){
-                                    if(tuple6type[p1][p2][p3][p4][p5][p6] == 0)
+                                // 黑冲4
+                                if ((x == 4 && y == 0) || (ix == 4 && iy == 0))
+                                {
+                                    if (tuple6type[p1][p2][p3][p4][p5][p6] == 0)
                                         tuple6type[p1][p2][p3][p4][p5][p6] = block4;
                                 }
-                                //白眠3
-                                if((x == 0 && y == 3)||(ix == 0 && iy == 3)){
-                                    if(tuple6type[p1][p2][p3][p4][p5][p6] == 0)
+                                // 白眠3
+                                if((x == 0 && y == 3) || (ix == 0 && iy == 3))
+                                {
+                                    if (tuple6type[p1][p2][p3][p4][p5][p6] == 0)
                                         tuple6type[p1][p2][p3][p4][p5][p6] = BLOCK3;
                                 }
-                                //黑眠3
-                                if((x == 3 && y == 0)||(ix == 3 && iy == 0)){
-                                    if(tuple6type[p1][p2][p3][p4][p5][p6] == 0)
+                                // 黑眠3
+                                if ((x == 3 && y == 0) || (ix == 3 && iy == 0))
+                                {
+                                    if (tuple6type[p1][p2][p3][p4][p5][p6] == 0)
                                         tuple6type[p1][p2][p3][p4][p5][p6] = block3;
                                 }
-                                //白眠2
-                                if((x ==0 && y == 2)||(ix == 0 && iy == 2)){
-                                    if(tuple6type[p1][p2][p3][p4][p5][p6] == 0)
+                                // 白眠2
+                                if ((x ==0 && y == 2) || (ix == 0 && iy == 2))
+                                {
+                                    if (tuple6type[p1][p2][p3][p4][p5][p6] == 0)
                                         tuple6type[p1][p2][p3][p4][p5][p6] = BLOCK2;
                                 }
-                                //黑眠2
-                                if((x == 2 && y == 0)||(ix == 2 && iy == 0)){
-                                    if(tuple6type[p1][p2][p3][p4][p5][p6] == 0)
+                                // 黑眠2
+                                if ((x == 2 && y == 0)||(ix == 2 && iy == 0))
+                                {
+                                    if (tuple6type[p1][p2][p3][p4][p5][p6] == 0)
                                         tuple6type[p1][p2][p3][p4][p5][p6] = block2;
                                 }
                             }
@@ -324,19 +423,20 @@ void chessAI::init_tuple6type()
 }
 
 
-//统计此时局面分数
-EVALUATION chessAI::evaluate(int board[15][15],bool needPrint)
+// 统计此时局面分数
+EVALUATION chessAI::evaluate(int board[15][15])
 {
-    //各棋型权重
+    // 各棋型权重
     int weight[17]={0,1000000,-10000000,50000,-100000,400,-100000,400,-8000,20,-50,20,-50,1,-3,1,-3};
 
     int i,j,type;
-    int stat[4][17];//统计4个方向上每种棋型的个数
+    int stat[4][17];// 统计4个方向上每种棋型的个数
     memset(stat,0,sizeof(stat));
 
 
-    int A[17][17];//包括边界的虚拟大棋盘,board[i][j]=A[i-1][j-1],3表示边界
-    for(int i=0;i<17;++i){
+    int A[17][17];// 包括边界的虚拟大棋盘,board[i][j]=A[i-1][j-1],3表示边界
+    for(int i=0;i<17;++i)
+    {
         A[i][0]=3;
         A[i][16]=3;
     }
@@ -433,26 +533,22 @@ POINTS chessAI::seekPoints(int board[15][15],int flag,int depth)
         for(int j=0;j<15;++j){
             worth[i][j]=-INT_MAX;
             if(board[i][j]==C_NONE&&B[i][j]==true&&myChesses[i][j]==0){
-                //board[i][j]=C_BLACK;
                 worth[i][j]=calcOnePosGreedy(board,i,j,C_WHITE);
                 //记录空位数量
                 if(worth[i][j]>-INT_MAX) couWorth++;
-                //worth[i][j]=evaluate(board).score;
-                //board[i][j]=C_NONE;
             }
         }
     }
 
-    //空位超过20时取20
+    // 空位超过20时取20
     if(couWorth>20){
         couWorth=20;
-        //qDebug()<<"取了20";
     }
-    //选出20个分数最高的
+    // 选出20个分数最高的
     int w,reflag,rescore,hashkey;
     for(int k=0;k<couWorth;++k){
         w=-INT_MAX;
-        //找出一个worth中的最大值
+        // 找出一个worth中的最大值
         for(int i=0;i<15;++i){
             for(int j=0;j<15;++j){
                 if(worth[i][j]>w){
@@ -464,23 +560,13 @@ POINTS chessAI::seekPoints(int board[15][15],int flag,int depth)
         }
         int board1[15][15];
         copyBoard(board,board1);
-        //把20个高分点依次变成白棋并进行局势评估
+        // 把20个高分点依次变成白棋并进行局势评估
         int x=best_points.pos[k].x(),y=best_points.pos[k].y();
-        //qDebug()<<"不足20位置2";
+
         board1[x][y]=C_WHITE;
         hashkey=zobb.calculateHash(board1);
 
-        /*if(zobb.probe(hashkey,depth,rescore,reflag)){
-            if(reflag==flag||(reflag==EXACT&&flag!=KILL)){
-                best_points.score[k]= rescore;
-                //qDebug()<<"规避了";
-            }
-        }
-        else{
-            best_points.score[k]=evaluate(board1,flag).score;
-            zobb.store(hashkey,depth,best_points.score[k],flag);
-        }*/
-        best_points.score[k]=evaluate(board1,flag).score;
+        best_points.score[k]=evaluate(board1).score;
         board1[x][y]=C_NONE;
         worth[best_points.pos[k].x()][best_points.pos[k].y()]=-INT_MAX;//清除掉上一点,计算下一点的位置和分数
     }
@@ -514,7 +600,7 @@ int chessAI::analyse(int (*board)[15], int depth,int alpha, int beta)
 {
     //用来区分算杀，精确值节点和a,b结点
     unsigned long long hashkey;
-    int flag,reflag,rescore;
+    int reflag,rescore;
     EVALUATION EVAL=evaluate(board);
     int board1[15][15];
     copyBoard(board,board1);
