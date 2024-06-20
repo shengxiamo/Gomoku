@@ -20,9 +20,10 @@ void zobrist::store(uint64_t hashKey, int depth, int score, int flag) {
     }
 }
 
-bool zobrist::probe(uint64_t hashKey, int depth,  int &score,  int &flag){
-    HashEntry& entry = table[hashKey % table.size()];
-    if (entry.hashKey == hashKey && entry.depth >= depth)
+bool zobrist::probe(uint64_t hashKey, int depth,  int &score,  int &flag)
+{
+    HashEntry& entry = table[hashKey % table.size()];// 哈希值取模获得下标索引
+    if (entry.hashKey == hashKey && entry.depth >= depth) // 深度控制
     {
         // 当前节点在置换表中且深度不低于当前节点深度，返回置换表中的值
         score = entry.score;
@@ -34,13 +35,17 @@ bool zobrist::probe(uint64_t hashKey, int depth,  int &score,  int &flag){
 unsigned long long randomTable[2][15][15];
 
 // 初始化随机数表
-void zobrist::initRandomTable() {
+void zobrist::initRandomTable()
+{
     std::random_device rd;
     std::mt19937_64 gen(rd());
     std::uniform_int_distribution<unsigned long long> dis;
-    for (int i = 0; i < 2; i++) {
-        for (int j = 0; j < 15; j++) {
-            for (int k = 0; k < 15; k++) {
+    for (int i = 0; i < 2; i++)
+    {
+        for (int j = 0; j < 15; j++)
+        {
+            for (int k = 0; k < 15; k++)
+            {
                 randomTable[i][j][k] = dis(gen);
             }
         }
@@ -48,13 +53,19 @@ void zobrist::initRandomTable() {
 }
 
 // 计算局面的哈希值
-unsigned long long zobrist::calculateHash(int board[][15]) {
+unsigned long long zobrist::calculateHash(int board[][15])
+{
     unsigned int hash = 0;
-    for (int i = 0; i < 15; i++) {
-        for (int j = 0; j < 15; j++) {
-            if (board[i][j] == C_BLACK) {
+    for (int i = 0; i < 15; i++)
+    {
+        for (int j = 0; j < 15; j++)
+        {
+            if (board[i][j] == C_BLACK)
+            {
                 hash ^= randomTable[0][i][j];
-            } else if (board[i][j] == C_WHITE) {
+            }
+            else if (board[i][j] == C_WHITE)
+            {
                 hash ^= randomTable[1][i][j];
             }
         }

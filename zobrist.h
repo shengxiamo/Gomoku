@@ -24,7 +24,7 @@ public:
 
 class zobrist {
 private:
-    std::vector<HashEntry> table;
+    std::vector<HashEntry> table; //记录哈希值的向量
 public:
     zobrist(unsigned long long size) ;
 
@@ -39,7 +39,5 @@ public:
     unsigned long long calculateHash(int board[][15]);
 
 };
-
-
 
 #endif // ZOBRIST_H
