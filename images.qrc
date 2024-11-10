@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>ganyu.jpg</file>
+        <file>board.jpg</file>
+    </qresource>
+</RCC>
